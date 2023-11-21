@@ -1,9 +1,17 @@
 <?php
 namespace com\icemalta\shoppingcart\view;
 
-use com\icemalta\shoppingcart\model\Cart;
+if (!isset($_SESSION['user'])) {
+    header('Location: index.php?view=login&redirect=checkout');
+}
 
-$_SESSION['cart'] = new Cart();
+$cart = unserialize($_SESSION['cart']);
+$user = unserialize($_SESSION['user']);
+$cart->setUserId($user->getId());
+$cart->save();
+$cart->checkout();
+
+unset($_SESSION['cart']);
 ?>
 
 <div class="grid gap-0 row-gap-3">

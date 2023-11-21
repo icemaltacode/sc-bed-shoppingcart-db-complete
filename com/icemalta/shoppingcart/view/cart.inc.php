@@ -2,9 +2,10 @@
 namespace com\icemalta\shoppingcart\view;
 
 use com\icemalta\shoppingcart\model\Cart;
+use com\icemalta\shoppingcart\model\Product;
 
-$products = $_SESSION['products'];
-$cart = $_SESSION['cart'] ?? new Cart();
+$products = Product::getAll();
+$cart = isset($_SESSION['cart']) ? unserialize($_SESSION['cart']) : new Cart();
 
 if (filter_var($_SERVER['REQUEST_METHOD'], FILTER_DEFAULT) === 'POST') {
     $action = filter_input(INPUT_POST, 'action', FILTER_DEFAULT);
@@ -21,7 +22,7 @@ if (filter_var($_SERVER['REQUEST_METHOD'], FILTER_DEFAULT) === 'POST') {
             break;
     }
 
-    $_SESSION['cart'] = $cart;
+    $_SESSION['cart'] = serialize($cart);
 }
 
 $showDepositWarning = count(array_filter($cart->cartItems, fn($cartItem) => $cartItem->product->requiresDeposit())) > 0;
@@ -116,9 +117,6 @@ $showDepositWarning = count(array_filter($cart->cartItems, fn($cartItem) => $car
                             </div>
                             <div class="col-md-4">
                                 <div class="row justify-content-end">
-                                    <div class="col-md-8">
-                                        <input class="form-control float-end" type="email" placeholder="Your email here">
-                                    </div>
                                     <div class="col-md-4">
                                         <button type="submit" class="btn btn-success float-end"><i class="bi-cart-fill"></i>
                                             Checkout</button>

@@ -1,21 +1,13 @@
 <?php
+require 'com/icemalta/shoppingcart/model/DBConnect.php';
+require 'com/icemalta/shoppingcart/model/User.php';
 require 'com/icemalta/shoppingcart/model/Product.php';
 require 'com/icemalta/shoppingcart/model/Cart.php';
 session_start();
 
-// Bootstrap products
-use com\icemalta\shoppingcart\model\Product;
-
-$products = [
-    new Product(1, 'Getting Started with React', 90, 'Get quickly up and running with React and create a profile website in just 3 hours!', 'masterclass_react.png'),
-    new Product(2, 'AI with TensorFlow & Python', 90, 'Create a machine learning model using Python and TensorFlow, focusing on image recognition and classification.', 'masterclass_ai.png'),
-    new Product(3, 'Game Development with Unity', 360, 'Create a clone of the popular 2D platformer featuring an Italian plumber, starting from scratch', 'masterclass_game.png', true),
-    new Product(4, 'Introduction to CSS FlexBox', 90, 'FlexBox can revolutionise how you create responsive websites. Learn how in just 3 hours!', 'masterclass_css.png'),
-];
-$_SESSION['products'] = $products;
 
 // Show the correct view
-$views = ['products', 'cart', 'checkout'];
+$views = ['products', 'cart', 'checkout', 'login', 'register', 'account'];
 $currentView = 'products';
 $redirect = filter_input(INPUT_GET, 'view', FILTER_DEFAULT);
 if ($redirect !== null && in_array($redirect, $views)) {
@@ -23,7 +15,7 @@ if ($redirect !== null && in_array($redirect, $views)) {
 }
 
 // Determine cart size for badge
-$cartSize = isset($_SESSION['cart']) ? $_SESSION['cart']->getItemCount() : 0;
+$cartSize = isset($_SESSION['cart']) ? unserialize($_SESSION['cart'])->getItemCount() : 0;
 ?>
 <!doctype html>
 <html lang="en">

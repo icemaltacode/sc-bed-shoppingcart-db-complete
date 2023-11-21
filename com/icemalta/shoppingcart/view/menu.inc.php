@@ -12,11 +12,11 @@
       </ul>
       <div class="d-flex">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <!-- <li class="nav-item">
-              <a class="nav-link" href="/account" role="button">
+            <li class="nav-item">
+              <a class="nav-link <?= $currentView === 'account' ? 'active' : '' ?>" href="index.php?view=account" role="button">
                 <i class="bi-person-fill"></i>
               </a>
-            </li> -->
+            </li>
             <li class="nav-item">
               <a class="nav-link <?= $currentView === 'cart' ? 'active' : '' ?>" href="index.php?view=cart" role="button">
                 <i class="bi-cart-fill"></i>

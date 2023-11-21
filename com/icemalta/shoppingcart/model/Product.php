@@ -1,8 +1,12 @@
 <?php
 namespace com\icemalta\shoppingcart\model;
 
+use \PDO;
+use com\icemalta\shoppingcart\model\DBConnect;
+
 class Product
 {
+    private DBConnect $db;
     private int $id;
     private string $name;
     private float $price;
@@ -18,6 +22,18 @@ class Product
         $this->description = $description;
         $this->featuredImage = $featuredImage;
         $this->requiresDeposit = $requiresDeposit;
+        $this->db = DBConnect::getInstance();
+    }
+
+    public static function getAll(): array
+    {
+        $sql = 'SELECT * FROM Product';
+        $sth = DBConnect::getInstance()->getConnection()->prepare($sql);
+        $sth->execute();
+        return $sth->fetchAll(
+            PDO::FETCH_FUNC,
+            fn(...$fields) => new Product(...$fields)
+        );
     }
 
     public function getId(): int
@@ -84,6 +100,29 @@ class Product
     {
         $this->requiresDeposit = $requiresDeposit;
         return $this;
+    }
+
+    public function save(): int
+    {
+        if ($this->id === null) {
+            // Insert
+            $sql = 'INSERT INTO Product(name, price, description, featuredImage, requiresDeposit)
+            VALUES (:name, :price, :description, :featuredImage, :requiresDeposit)';
+            $sth = $this->db->getConnection()->prepare($sql);
+        } else {
+            // Update
+            $sql = 'UPDATE Product SET name = :name, price = :price, description = :description, 
+            featuredImage = :featuredImage, requiresDeposit = :requiresDeposit WHERE id = :id';
+            $sth = $this->db->getConnection()->prepare($sql);
+            $sth->bindValue('id', $this->id);
+        }
+        $sth->bindValue('name', $this->name);
+        $sth->bindValue('price', $this->price);
+        $sth->bindValue('description', $this->description);
+        $sth->bindValue('featuredImage', $this->featuredImage);
+        $sth->bindValue('requiresDeposit', $this->requiresDeposit, PDO::PARAM_BOOL);
+        $sth->execute();
+        return $sth->rowCount();
     }
 
 }

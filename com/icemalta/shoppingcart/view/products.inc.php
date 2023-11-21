@@ -1,6 +1,9 @@
 <?php
 namespace com\icemalta\shoppingcart\view;
-$products = $_SESSION['products'];
+
+use com\icemalta\shoppingcart\model\Product;
+
+$products = Product::getAll();
 
 ?>
 
